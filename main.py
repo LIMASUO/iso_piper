@@ -1,4 +1,5 @@
 from tkinter import *
+import isoplane
 
 BUTTON_PANEL_WIDTH = 130
 
@@ -89,8 +90,10 @@ class MainWindow:
         self.core_margins()
         self.entry = CommandInput(self)
         self.canvas = DynamicCanvas(self)
+        isoplane.draw_isoplane(self.canvas.canvas)
         self.panel = ButtonsPanel()
-        self.test_button1 = ButtonWrapper("Create Elbow", test_function, 1, self.panel.get_frame())
+        self.test_button1 = ButtonWrapper("Toggle Isoplane", test_function, 1, self.panel.get_frame())
+        self.test_button2 = ButtonWrapper("Create Elbow", test_function, 1, self.panel.get_frame())
 
 
 def main():
