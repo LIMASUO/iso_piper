@@ -1,11 +1,16 @@
-# module to store the current plane and change it when required
-# by the user
-
-from tkinter import *
+# module to store the current plane and change it when required by the user
 
 planes = ["XY", "YZ", "ZX"]
 planes_dict = {0: planes[0], 1: planes[1], 2: planes[2]}
 current_plane = 0
+x_vec = (0.866, -0.5)
+y_vec = (-0.866, -0.5)
+z_vec = (0.0, 1.0)
+dir_vec_map = {'x': x_vec, 'y': y_vec, 'z': z_vec}
+
+
+def toggle_plane(*args):
+    print("chicken")
 
 
 def set_current_plane(plane):
@@ -14,6 +19,3 @@ def set_current_plane(plane):
     print("current plane: " + str(planes_dict[plane]))
 
 
-def draw_isoplane(canvas):
-    global current_plane
-    # canvas.create_line(4, 4, 50, 50, fill="red")
