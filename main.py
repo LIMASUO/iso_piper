@@ -1,20 +1,18 @@
 from tkinter import *
+import db_manager
+import components
 import isoplane
 
 BUTTON_PANEL_WIDTH = 130
 
 
-def test_function():
-    print("foo")
-
-
 class ButtonWrapper(Button):
 
-    def __init__(self, name, func, height, parent_container):
+    def __init__(self, name, func, height, parent_container, func_param=None):
         Button.__init__(self)
         self.container = Frame(parent_container, padx=5, pady=5, width=BUTTON_PANEL_WIDTH)
         self.button_object = Button(self.container, text=name, height=height)
-        self.button_object.configure(command=lambda: func())
+        self.button_object.configure(command=lambda: func(func_param))
         self.button_object.pack(fill=X, expand=YES)
         self.container.pack(side=TOP, fill=X)
 
@@ -41,13 +39,18 @@ class MessageBox(Label):
 class DynamicCanvas(Canvas):
 
     def canvas_manager(self):
-        # self.canvas_frame.bind("<Configure>", self.on_resize)
+        self.canvas_frame.bind("<Configure>", self.on_resize)
         self.canvas.pack(fill=BOTH, expand=YES)
         self.canvas_frame.pack(side=RIGHT, fill=BOTH, expand=YES)
 
     def on_resize(self, event):
         parent_width = self.parent.root.winfo_width()
         self.canvas_frame.config(width=parent_width-BUTTON_PANEL_WIDTH)
+        self.redraw()
+
+    def redraw(self):
+        components.draw_isoplane(self.canvas)
+        # also redraw all components using the draw_controller
 
     def __init__(self, parent=None):
         Canvas.__init__(self)
@@ -86,17 +89,22 @@ class MainWindow:
         self.margin_size = 10
         self.root = Tk()
         self.root.geometry('800x580')
+        # self.root.resizable(0, 0)
         self.root.title("Piping Isometrics Generator")
         self.core_margins()
         self.entry = CommandInput(self)
         self.canvas = DynamicCanvas(self)
-        isoplane.draw_isoplane(self.canvas.canvas)
+        components.initialize_isoplane(self.canvas.canvas)
         self.panel = ButtonsPanel()
-        self.test_button1 = ButtonWrapper("Toggle Isoplane", test_function, 1, self.panel.get_frame())
-        self.test_button2 = ButtonWrapper("Create Elbow", test_function, 1, self.panel.get_frame())
+        self.test_button1 = ButtonWrapper("Toggle Isoplane",
+                                          isoplane.toggle_plane, 1,
+                                          self.panel.get_frame())
+        # self.test_button2 = ButtonWrapper("Create Elbow", test_function, 1,
+        #                                   self.panel.get_frame())
 
 
 def main():
+    db_manager.initialize_db()
     app = MainWindow()
     app.root.mainloop()
 
