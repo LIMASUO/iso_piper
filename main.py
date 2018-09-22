@@ -1,16 +1,15 @@
 from tkinter import *
 import db_manager
 import components
-import isoplane
-
-BUTTON_PANEL_WIDTH = 130
+import constants
 
 
 class ButtonWrapper(Button):
 
     def __init__(self, name, func, height, parent_container, func_param=None):
         Button.__init__(self)
-        self.container = Frame(parent_container, padx=5, pady=5, width=BUTTON_PANEL_WIDTH)
+        self.container = Frame(parent_container, padx=5, pady=5,
+                               width=constants.BUTTON_PANEL_WIDTH)
         self.button_object = Button(self.container, text=name, height=height)
         self.button_object.configure(command=lambda: func(func_param))
         self.button_object.pack(fill=X, expand=YES)
@@ -23,7 +22,7 @@ class ButtonsPanel:
         self.main_frame = Frame(bd=3, relief=GROOVE)
         right_margin = Frame(width=5)
         right_margin.pack(side=RIGHT)
-        width_controller = Frame(self.main_frame, width=BUTTON_PANEL_WIDTH)
+        width_controller = Frame(self.main_frame, width=constants.BUTTON_PANEL_WIDTH)
         width_controller.pack()
         self.main_frame.pack(side=LEFT, fill=Y)
 
@@ -45,10 +44,10 @@ class DynamicCanvas(Canvas):
 
     def on_resize(self, event):
         parent_width = self.parent.root.winfo_width()
-        self.canvas_frame.config(width=parent_width-BUTTON_PANEL_WIDTH)
+        self.canvas_frame.config(width=parent_width-constants.BUTTON_PANEL_WIDTH)
         self.redraw()
 
-    def redraw(self):
+    def redraw(self, *args):
         components.draw_isoplane(self.canvas)
         # also redraw all components using the draw_controller
 
@@ -96,11 +95,13 @@ class MainWindow:
         self.canvas = DynamicCanvas(self)
         components.initialize_isoplane(self.canvas.canvas)
         self.panel = ButtonsPanel()
-        self.test_button1 = ButtonWrapper("Toggle Isoplane",
-                                          isoplane.toggle_plane, 1,
+        self.test_button1 = ButtonWrapper("Redraw",
+                                          self.canvas.redraw, 1,
                                           self.panel.get_frame())
-        # self.test_button2 = ButtonWrapper("Create Elbow", test_function, 1,
-        #                                   self.panel.get_frame())
+        self.test_button1 = ButtonWrapper("Toggle Isoplane",
+                                          components.toggle_plane, 1,
+                                          self.panel.get_frame(),
+                                          self.canvas.canvas)
 
 
 def main():
