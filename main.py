@@ -2,6 +2,7 @@ from tkinter import *
 import db_manager
 import components
 import constants
+import boundingbox
 
 
 class ButtonWrapper(Button):
@@ -49,6 +50,8 @@ class DynamicCanvas(Canvas):
 
     def redraw(self, *args):
         components.draw_isoplane(self.canvas)
+        boundingbox.draw_boundingbox(self.canvas, self.canvas.winfo_width(),
+                                     self.canvas.winfo_height())
         # also redraw all components using the draw_controller
 
     def __init__(self, parent=None):
@@ -87,18 +90,24 @@ class MainWindow:
     def __init__(self):
         self.margin_size = 10
         self.root = Tk()
-        self.root.geometry('800x580')
+        self.root.geometry(str(constants.DEFAULT_SCREEN_WIDTH) + "x"
+                           + str(constants.DEFAULT_SCREEN_HEIGHT))
         # self.root.resizable(0, 0)
-        self.root.title("Piping Isometrics Generator")
+        self.root.title("Piping Isometrics Generator (alpha)")
         self.core_margins()
         self.entry = CommandInput(self)
         self.canvas = DynamicCanvas(self)
         components.initialize_isoplane(self.canvas.canvas)
+        boundingbox.initialize_boundingbox(self.canvas.canvas)
         self.panel = ButtonsPanel()
         self.test_button1 = ButtonWrapper("Redraw",
                                           self.canvas.redraw, 1,
                                           self.panel.get_frame())
         self.test_button1 = ButtonWrapper("Toggle Isoplane",
+                                          components.toggle_plane, 1,
+                                          self.panel.get_frame(),
+                                          self.canvas.canvas)
+        self.test_button1 = ButtonWrapper("Toggle Bounding Box",
                                           components.toggle_plane, 1,
                                           self.panel.get_frame(),
                                           self.canvas.canvas)

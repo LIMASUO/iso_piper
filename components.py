@@ -3,7 +3,6 @@
 import constants
 import geometry
 import isoplane
-import math
 
 
 # draw a straight line in either of the 3 directions
@@ -37,17 +36,19 @@ def toggle_plane(canvas):
 # initialization is required since winfo_width and winfo_height do not
 # return the correct parameters when the canvas is first initialized
 def initialize_isoplane(canvas):
-    base_pt = [constants.LEFT_PADDING, 525 - constants.BOTTOM_PADDING]
+    base_pt = [constants.LEFT_PADDING, constants.DEFAULT_CANVAS_HEIGHT
+               - constants.BOTTOM_PADDING]
     curr_plane_str = isoplane.planes_dict[isoplane.current_plane]
     canvas.create_line(base_pt[0], base_pt[1],
-                       constants.LEFT_PADDING, 525 - constants.BOTTOM_PADDING
+                       constants.LEFT_PADDING, constants.DEFAULT_CANVAS_HEIGHT
+                       - constants.BOTTOM_PADDING
                        - constants.TRIAD_LEN, fill="red", tags="triadlinez",
                        width=('z' in curr_plane_str) * constants.TRIAD_THK)
     line(canvas, base_pt[0], base_pt[1], 'green3', "triadlinex", 'x',
          constants.TRIAD_LEN, ('x' in curr_plane_str) * constants.TRIAD_THK)
     line(canvas, base_pt[0], base_pt[1], 'gold2', "triadliney", 'y',
          constants.TRIAD_LEN, ('x' in curr_plane_str) * constants.TRIAD_THK)
-    isoplane.current_plane = next(isoplane.planes_iterable)
+    next(isoplane.planes_iterable)
 
 
 def draw_isoplane(canvas):
@@ -56,6 +57,7 @@ def draw_isoplane(canvas):
     curr_plane_str = isoplane.planes_dict[isoplane.current_plane]
     if canvas.winfo_height() == 1:
         initialize_isoplane(canvas)
+        # self.redraw()
     else:
         z_line = canvas.find_withtag("triadlinez")
         if z_line:
