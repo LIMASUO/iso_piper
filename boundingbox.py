@@ -11,6 +11,7 @@ import isoplane
 import components
 
 vertices = []   # hexagon vertices in anti-clockwise sequence starting center bottom
+enabled = True
 
 
 # Creates the hexagon for the isometric representation of the bounding box.
@@ -20,6 +21,8 @@ vertices = []   # hexagon vertices in anti-clockwise sequence starting center bo
 def initialize_boundingbox(canvas, curr_canvas_width=constants.DEFAULT_CANVAS_WIDTH,
                            curr_canvas_height=constants.DEFAULT_CANVAS_HEIGHT):
     global vertices
+    global enabled
+    enabled = True
     vertices = []
     v0 = [curr_canvas_width * 0.5,
           curr_canvas_height - constants.BBOX_VERT_MARGIN]
@@ -58,18 +61,34 @@ def initialize_boundingbox(canvas, curr_canvas_width=constants.DEFAULT_CANVAS_WI
         count += 1
 
 
-def draw_boundingbox(canvas, curr_canvas_width, curr_canvas_height):
-    if canvas.winfo_height() == 1:
-        initialize_boundingbox(canvas)
-    else:
-        line_test = canvas.find_withtag("bbox_line1")
-        if line_test:
+def clear_boundingbox(canvas):
+    global enabled
+    line_test = canvas.find_withtag("bbox_line1")
+    if line_test:
+        for i in range(0, 6):
+            canvas.delete("bbox_line" + str(i + 1))
+    circle_test = canvas.find_withtag("bbox_circle1")
+    if canvas.winfo_height() != 1:
+        if circle_test:
             for i in range(0, 6):
-                canvas.delete("bbox_line" + str(i+1))
-        circle_test = canvas.find_withtag("bbox_circle1")
-        if canvas.winfo_height() != 1:
-            if circle_test:
-                for i in range(0, 6):
-                    canvas.delete("bbox_circle" + str(i + 1))
-        initialize_boundingbox(canvas, curr_canvas_width, curr_canvas_height)
+                canvas.delete("bbox_circle" + str(i + 1))
+    enabled = False
+
+
+def draw_boundingbox(canvas, curr_canvas_width, curr_canvas_height):
+    if enabled:
+        if canvas.winfo_height() == 1:
+            initialize_boundingbox(canvas)
+        else:
+            clear_boundingbox(canvas)
+            initialize_boundingbox(canvas, curr_canvas_width, curr_canvas_height)
+
+
+def toggle_boundingbox(canvas):
+    global enabled
+    if enabled:
+        clear_boundingbox(canvas)
+    else:
+        enabled = True
+        draw_boundingbox(canvas, canvas.winfo_width(), canvas.winfo_height())
 

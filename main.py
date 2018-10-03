@@ -108,7 +108,7 @@ class MainWindow:
                                           self.panel.get_frame(),
                                           self.canvas.canvas)
         self.test_button1 = ButtonWrapper("Toggle Bounding Box",
-                                          components.toggle_plane, 1,
+                                          boundingbox.toggle_boundingbox, 1,
                                           self.panel.get_frame(),
                                           self.canvas.canvas)
 
