@@ -5,6 +5,10 @@ import geometry
 import isoplane
 
 
+def add_component(comp_string):
+    print("adding component")
+
+
 # draw a straight line in either of the 3 directions
 # direction : this can be eithe x, y, or z
 # x0 : the x component of the start point of the line
@@ -78,13 +82,13 @@ def draw_isoplane(canvas):
                  constants.TRIAD_LEN, ('y' in curr_plane_str) * constants.TRIAD_THK)
 
 
-class Ports:
+class Port:
     def __init__(self):
         self.coords = []
 
 
 class Pipe:
-    def __init(self):
+    def __init__(self):
         pass
 
 

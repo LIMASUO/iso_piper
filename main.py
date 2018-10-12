@@ -1,8 +1,10 @@
 from tkinter import *
+import functools
 import db_manager
 import components
 import constants
 import boundingbox
+import input
 
 
 class ButtonWrapper(Button):
@@ -62,17 +64,43 @@ class DynamicCanvas(Canvas):
         self.canvas_manager()
 
 
+class CommandStatus(Label):
+    def __init__(self):
+        Label.__init__(self)
+        self.label_container = Frame()
+        self.separator = Frame(self.label_container, height=10)
+        self.separator.pack()
+        self.label = Label(self.label_container, font='System, 11',
+                           bg=constants.CMD_STATUS_COLOR,
+                           anchor="w")
+        self.label.pack(fill=BOTH, expand=YES)
+        self.label_container.pack(side=BOTTOM, fill=X)
+
+
 class CommandInput(Entry):
-    def __init__(self, parent=None):
+    def __init__(self):
         Entry.__init__(self)
-        self.parent = parent
+        self.parent = None
         self.entry_container = Frame()
-        self.separator = Frame(self.entry_container, height=10)
+        self.separator = Frame(self.entry_container, height=4)
         self.separator.pack()
         self.entry = Entry(self.entry_container, font='System, 11', bg='silver')
         self.entry.pack(fill=BOTH, expand=YES)
         self.entry.focus()
         self.entry_container.pack(side=BOTTOM, fill=X)
+        self.event_binder()
+
+    def set_parent(self, parent):
+        self.parent = parent
+        self.event_binder()
+
+    def event_binder(self):
+        self.entry.bind("<Return>", functools.partial(input.input_manager,
+                                                      args=[self.entry,
+                                                            self.parent]))
+        self.entry.bind("<KP_Enter>", functools.partial(input.input_manager,
+                                                        args=[self.entry,
+                                                              self.parent]))
 
 
 class MainWindow:
@@ -95,8 +123,10 @@ class MainWindow:
         # self.root.resizable(0, 0)
         self.root.title("Piping Isometrics Generator (alpha)")
         self.core_margins()
-        self.entry = CommandInput(self)
+        self.entry = CommandInput()
+        self.label = CommandStatus()
         self.canvas = DynamicCanvas(self)
+        self.entry.set_parent(self)
         components.initialize_isoplane(self.canvas.canvas)
         boundingbox.initialize_boundingbox(self.canvas.canvas)
         self.panel = ButtonsPanel()
