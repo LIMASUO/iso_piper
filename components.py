@@ -3,10 +3,15 @@
 import constants
 import geometry
 import isoplane
+import functools
+import db_manager
+import uuid
 
 
-def add_component(comp_string):
-    print("adding component")
+# a container for all components currently in the drawing
+# this is required for realtime refresh purposes since we cannot
+# retrieve the data from the database on ever screen resize
+components_container = {}
 
 
 # draw a straight line in either of the 3 directions
@@ -82,22 +87,22 @@ def draw_isoplane(canvas):
                  constants.TRIAD_LEN, ('y' in curr_plane_str) * constants.TRIAD_THK)
 
 
-class Port:
-    def __init__(self):
-        self.coords = []
+def draw_pipe(args):
+    pass
 
 
-class Pipe:
-    def __init__(self):
-        pass
+def draw_elbow(args):
+    pass
 
 
-class Elbow:
-    def __init__(self):
-        pass
+draw_methods = {'pipe': draw_pipe,
+                'elbow': draw_elbow}
 
 
-class Tee:
-    def __init__(self):
-        pass
-
+# Function should create a component ID and ports location list,
+# and return them to the calling function in input.py for storage
+# Function is also responsible for drawing the component by creating
+# a new instance of the component type
+def draw_component(command_string):
+    params = command_string[1:]
+    draw_methods.get(command_string[0])(params)

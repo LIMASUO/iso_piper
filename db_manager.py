@@ -41,6 +41,12 @@ def validate_db():
                         parent text)''')
     else:
         print("Geom table validated.")
+    if not (validate_table('ports')):
+        print("Creating ports table...")
+        main_db.execute('''CREATE TABLE ports (id text, parent text, vec_x float,
+                        vec_y float, vec_z float)''')
+    else:
+        print("Geom table validated.")
     if not (validate_table('cnfg')):
         print("Creating configuration table...")
         main_db.execute('''CREATE TABLE cnfg (id text, value text, desc text)''')
@@ -54,4 +60,8 @@ def initialize_db():
     main_db = sqlite3.connect('project.db')
     print("SQLite version: " + sqlite3.version)
     validate_db()
+
+
+def add_component_to_db(comp):
+    pass
 
